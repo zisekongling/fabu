@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>项目展示平台</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            /* 默认主题 - 青春蓝 */
+            --primary-color: #4e89ae;
+            --secondary-color: #43658b;
+            --accent-color: #ed6663;
+            --light-color: #f1f6f9;
+            --dark-color: #2b2d42;
+            --card-bg: #ffffff;
+            --body-bg: #f8f9fa;
+            --text-color: #333333;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        /* 主题切换样式 */
+        .theme-purple {
+            --primary-color: #8a4fff;
+            --secondary-color: #6c3fb1;
+            --accent-color: #ff6b9c;
+            --body-bg: #f9f5ff;
+        }
+
+        .theme-green {
+            --primary-color: #38b2ac;
+            --secondary-color: #319795;
+            --accent-color: #f6ad55;
+            --body-bg: #f0fff4;
+        }
+
+        .theme-orange {
+            --primary-color: #f39c12;
+            --secondary-color: #d35400;
+            --accent-color: #3498db;
+            --body-bg: #fffaf0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--body-bg);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color 0.3s ease;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* 头部样式 */
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 1.5rem 0;
+            box-shadow: 0 4px 12px var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .logo i {
+            font-size: 2.2rem;
+            color: var(--accent-color);
+        }
+
+        .theme-controls {
+            display: flex;
+            gap: 12px;
+        }
+
+        .theme-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 2px solid white;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .theme-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .theme-default {
+            background: linear-gradient(135deg, #4e89ae, #43658b);
+        }
+
+        .theme-purple-btn {
+            background: linear-gradient(135deg, #8a4fff, #6c3fb1);
+        }
+
+        .theme-green-btn {
+            background: linear-gradient(135deg, #38b2ac, #319795);
+        }
+
+        .theme-orange-btn {
+            background: linear-gradient(135deg, #f39c12, #d35400);
+        }
+
+        /* 搜索和筛选区域 */
+        .filters {
+            padding: 1.5rem 0;
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+
+        .filter-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 20px 12px 45px;
+            border-radius: 30px;
+            border: 2px solid #e0e0e0;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .search-box input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(78, 137, 174, 0.2);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a0a0a0;
+        }
+
+        .category-filter, .tag-filter {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter-select {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 30px;
+            border: 2px solid #e0e0e0;
+            background-color: white;
+            font-size: 1rem;
+            appearance: none;
+            cursor: pointer;
+        }
+
+        .filter-select:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(78, 137, 174, 0.2);
+        }
+
+        .tag-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 6px 15px;
+            background-color: #e0e0e0;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tag:hover, .tag.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* 项目展示区域 */
+        .projects-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 30px 0 20px;
+        }
+
+        .projects-title {
+            font-size: 1.8rem;
+            color: var(--dark-color);
+        }
+
+        .refresh-btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .refresh-btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .project-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 6px 15px var(--shadow);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .project-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 25px var(--shadow);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 20px;
+        }
+
+        .project-id {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 5px;
+        }
+
+        .project-name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .project-category {
+            display: inline-block;
+            background-color: rgba(78, 137, 174, 0.1);
+            color: var(--primary-color);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-bottom: 15px;
+        }
+
+        .project-description {
+            color: #555;
+            margin-bottom: 20px;
+            min-height: 80px;
+        }
+
+        .project-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .project-tag {
+            background-color: #f0f0f0;
+            color: #666;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+        }
+
+        .project-link {
+            display: block;
+            text-align: center;
+            background-color: var(--accent-color);
+            color: white;
+            padding: 10px 0;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+
+        .project-link:hover {
+            background-color: var(--secondary-color);
+        }
+
+        /* 加载状态 */
+        .loading {
+            text-align: center;
+            padding: 40px 0;
+            font-size: 1.2rem;
+            color: var(--primary-color);
+        }
+
+        .loading i {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .filter-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .projects-header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .theme-controls {
+                justify-content: center;
+            }
+        }
+
+        /* 页脚样式 */
+        footer {
+            background-color: var(--dark-color);
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-rocket"></i>
+                    <span>项目展示平台</span>
+                </div>
+                <div class="theme-controls">
+                    <div class="theme-btn theme-default" data-theme="default"></div>
+                    <div class="theme-btn theme-purple-btn" data-theme="purple"></div>
+                    <div class="theme-btn theme-green-btn" data-theme="green"></div>
+                    <div class="theme-btn theme-orange-btn" data-theme="orange"></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <section class="filters">
+            <div class="filter-group">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="search-input" placeholder="搜索项目名称...">
+                </div>
+                
+                <div class="category-filter">
+                    <select id="category-select" class="filter-select">
+                        <option value="">所有分类</option>
+                    </select>
+                </div>
+                
+                <div class="tag-filter">
+                    <div class="tag-container" id="tag-container">
+                        <!-- 标签会通过JS动态添加 -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="projects">
+            <div class="projects-header">
+                <h2 class="projects-title">精选项目</h2>
+                <button class="refresh-btn" id="refresh-btn">
+                    <i class="fas fa-sync-alt"></i>
+                    刷新数据
+                </button>
+            </div>
+            
+            <div class="projects-grid" id="projects-grid">
+                <!-- 项目卡片会通过JS动态添加 -->
+                <div class="loading">
+                    <i class="fas fa-spinner"></i>
+                    <p>正在加载项目数据...</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>项目展示平台 &copy; 2023 | 青春简洁风格 | 支持四种主题切换</p>
+        </div>
+    </footer>
+
+    <script>
+        // 获取DOM元素
+        const projectsGrid = document.getElementById('projects-grid');
+        const searchInput = document.getElementById('search-input');
+        const categorySelect = document.getElementById('category-select');
+        const tagContainer = document.getElementById('tag-container');
+        const refreshBtn = document.getElementById('refresh-btn');
+        const themeButtons = document.querySelectorAll('.theme-btn');
+
+        // 全局变量
+        let allProjects = [];
+        let allCategories = new Set();
+        let allTags = new Set();
+        let selectedTags = new Set();
+
+        // 主题切换功能
+        themeButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const theme = button.getAttribute('data-theme');
+                document.body.className = theme ? `theme-${theme}` : '';
+            });
+        });
+
+        // 刷新数据功能
+        refreshBtn.addEventListener('click', () => {
+            fetchProjects(true);
+        });
+
+        // 搜索功能
+        searchInput.addEventListener('input', () => {
+            filterProjects();
+        });
+
+        // 分类筛选功能
+        categorySelect.addEventListener('change', () => {
+            filterProjects();
+        });
+
+        // 获取项目数据
+        async function fetchProjects(forceRefresh = false) {
+            try {
+                // 显示加载状态
+                projectsGrid.innerHTML = `
+                    <div class="loading">
+                        <i class="fas fa-spinner"></i>
+                        <p>正在加载项目数据...</p>
+                    </div>
+                `;
+                
+                // 添加时间戳防止缓存
+                const timestamp = forceRefresh ? `&cache=${new Date().getTime()}` : '';
+                const apiUrl = `https://api.allorigins.win/get?url=https://gitee.com/zisekongling/json-remote-repository/raw/master/fabu.json${timestamp}`;
+                
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+                
+                // 解析JSON数据
+                const jsonData = JSON.parse(data.contents);
+                allProjects = jsonData;
+                
+                // 处理分类和标签
+                processCategoriesAndTags();
+                
+                // 渲染项目
+                renderProjects(allProjects);
+                
+            } catch (error) {
+                console.error('获取数据失败:', error);
+                projectsGrid.innerHTML = `
+                    <div class="loading">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>数据加载失败，请稍后再试</p>
+                    </div>
+                `;
+            }
+        }
+
+        // 处理分类和标签
+        function processCategoriesAndTags() {
+            allCategories.clear();
+            allTags.clear();
+            
+            allProjects.forEach(project => {
+                allCategories.add(project.category);
+                
+                if (project.tags && Array.isArray(project.tags)) {
+                    project.tags.forEach(tag => allTags.add(tag));
+                }
+            });
+            
+            // 更新分类下拉框
+            updateCategoryFilter();
+            
+            // 更新标签容器
+            updateTagFilter();
+        }
+
+        // 更新分类下拉框
+        function updateCategoryFilter() {
+            categorySelect.innerHTML = '<option value="">所有分类</option>';
+            
+            allCategories.forEach(category => {
+                const option = document.createElement('option');
+                option.value = category;
+                option.textContent = category;
+                categorySelect.appendChild(option);
+            });
+        }
+
+        // 更新标签容器
+        function updateTagFilter() {
+            tagContainer.innerHTML = '';
+            
+            allTags.forEach(tag => {
+                const tagElement = document.createElement('span');
+                tagElement.className = 'tag';
+                tagElement.textContent = tag;
+                tagElement.dataset.tag = tag;
+                
+                tagElement.addEventListener('click', () => {
+                    tagElement.classList.toggle('active');
+                    
+                    if (tagElement.classList.contains('active')) {
+                        selectedTags.add(tag);
+                    } else {
+                        selectedTags.delete(tag);
+                    }
+                    
+                    filterProjects();
+                });
+                
+                tagContainer.appendChild(tagElement);
+            });
+        }
+
+        // 筛选项目
+        function filterProjects() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const selectedCategory = categorySelect.value;
+            
+            const filteredProjects = allProjects.filter(project => {
+                // 搜索筛选
+                if (searchTerm && !project.name.toLowerCase().includes(searchTerm)) {
+                    return false;
+                }
+                
+                // 分类筛选
+                if (selectedCategory && project.category !== selectedCategory) {
+                    return false;
+                }
+                
+                // 标签筛选
+                if (selectedTags.size > 0) {
+                    const projectTags = new Set(project.tags || []);
+                    for (const tag of selectedTags) {
+                        if (!projectTags.has(tag)) {
+                            return false;
+                        }
+                    }
+                }
+                
+                return true;
+            });
+            
+            renderProjects(filteredProjects);
+        }
+
+        // 渲染项目
+        function renderProjects(projects) {
+            if (projects.length === 0) {
+                projectsGrid.innerHTML = `
+                    <div class="loading">
+                        <i class="fas fa-search"></i>
+                        <p>没有找到匹配的项目</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            projectsGrid.innerHTML = '';
+            
+            projects.forEach(project => {
+                const card = document.createElement('div');
+                card.className = 'project-card';
+                
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div class="project-id">项目ID: ${project.id}</div>
+                        <h3 class="project-name">${project.name}</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="project-category">${project.category}</div>
+                        <p class="project-description">${project.description}</p>
+                        <div class="project-tags">
+                            ${(project.tags || []).map(tag => `<span class="project-tag">${tag}</span>`).join('')}
+                        </div>
+                        <a href="${project.url}" class="project-link" target="_blank">查看详情</a>
+                    </div>
+                `;
+                
+                projectsGrid.appendChild(card);
+            });
+        }
+
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchProjects();
+        });
+    </script>
+</body>
+</html>
